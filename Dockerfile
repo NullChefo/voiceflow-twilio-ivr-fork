@@ -1,5 +1,5 @@
 # Stage 1: Install dependencies
-FROM node:22-alpine AS dependencies
+FROM node:22-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -10,19 +10,20 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Stage 2: Create a lightweight image for running the application
-FROM node:22-alpine AS run
+# Copy the application files
+COPY . .
 
-# Install PM2 globally
+# Stage 2: Create a lightweight image for running the application
+FROM node:22-alpine
+
+# Install PM2 globally in the runtime stage
 RUN npm install pm2 -g
 
 # Set the working directory
 WORKDIR /app
 
-# Copy only the necessary files from the dependencies stage
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=dependencies /app/package*.json ./
-COPY . .
+# Copy only the necessary files from the builder stage
+COPY --from=builder /app .
 
 # Expose the port the app runs on
 EXPOSE 3000
