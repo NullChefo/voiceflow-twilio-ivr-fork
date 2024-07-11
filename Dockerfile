@@ -29,4 +29,4 @@ COPY --from=builder /app .
 EXPOSE 3000
 
 # Command to run the application with PM2
-CMD ["pm2-runtime", "start", "app.js", "--watch"]
+CMD ["pm2-runtime", "start", "index.js", "--watch"]
