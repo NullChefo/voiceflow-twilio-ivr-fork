@@ -42,6 +42,6 @@ jobs:
 
         # TODO make it dynamic
       - name: Deploy
-        run: railway up --service voice-flow-docker
+        run: railway up --service b47f7009-a753-4ecc-a05f-1978fb96c136
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
