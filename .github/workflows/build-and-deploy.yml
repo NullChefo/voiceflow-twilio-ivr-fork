@@ -40,6 +40,7 @@ jobs:
       - name: Install Railway
         run: npm i -g @railway/cli
 
+        # TODO make it dynamic
       - name: Deploy
         run: railway up --service voice-flow-docker
         env:

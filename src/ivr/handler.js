@@ -7,8 +7,10 @@ const ffmpeg = require('fluent-ffmpeg')
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path)
 
-async function convertAudio(inputPath, outputPath) {
-  return new Promise((resolve, reject) => {
+async function convertAudio(inputPath, outputPath)
+{
+  return new Promise((resolve, reject) =>
+  {
     ffmpeg(inputPath)
       .audioFrequency(16000)
       .audioChannels(1)
@@ -20,11 +22,14 @@ async function convertAudio(inputPath, outputPath) {
   })
 }
 
-async function deleteFile(filePath) {
-  try {
+async function deleteFile(filePath)
+{
+  try
+  {
     await fs.unlink(filePath)
     console.log(`Deleted file: ${filePath}`)
-  } catch (err) {
+  } catch (err)
+  {
     console.error(`Error deleting file: ${err.message}`)
   }
 }
@@ -54,7 +59,8 @@ const VOICEFLOW_PROJECT_ID = process.env.VOICEFLOW_PROJECT_ID || null
 let session = `${VOICEFLOW_VERSION_ID}.${createSession()}`
 const RESET_STATE = process.env.RESET_STATE.toLowerCase() || 'false'
 
-async function interact(caller, action) {
+async function interact(caller, action)
+{
   const twiml = new VoiceResponse()
   // call the Voiceflow API with the user's name & request, get back a response
   const request = {
@@ -84,37 +90,44 @@ async function interact(caller, action) {
   let agent = endTurn
     ? twiml
     : twiml.gather({
-        input: 'speech dtmf', // 'speech',
-        numDigits: 4,
-        finishOnKey: '#',
-        hints: 'I need to check my account, Tico, Voiceflow, NiKo, yes',
-        action: '/ivr/interaction',
-        profanityFilter: false,
-        actionOnEmptyResult: true,
-        speechModel: 'experimental_utterances', // 'phone_call', 'numbers_and_commands','experimental_utterances', 'experimental_conversations', ...
-        enhanced: true,
-        speechTimeout: 'auto',
-        language: 'en-US',
-        method: 'POST',
-      })
+      input: 'speech dtmf', // 'speech',
+      numDigits: 4,
+      finishOnKey: '#',
+      hints: 'I need to check my account, Tico, Voiceflow, NiKo, yes',
+      action: '/ivr/interaction',
+      profanityFilter: false,
+      actionOnEmptyResult: true,
+      speechModel: 'phone_call', // 'phone_call', 'numbers_and_commands','experimental_utterances', 'experimental_conversations', ...
+      enhanced: true,
+      speechTimeout: '5',
+      language: 'en-US',
+      method: 'POST',
+    })
 
   // loop through the response
-  for (const trace of response.data) {
-    switch (trace.type) {
+  for (const trace of response.data)
+  {
+    switch (trace.type)
+    {
       case 'text':
       case 'speak': {
-        if (trace.payload?.src) {
-          if (trace.payload.src.startsWith('data:')) {
+        if (trace.payload?.src)
+        {
+          if (trace.payload.src.startsWith('data:'))
+          {
             const rawFileName = `raw-${Date.now()}.mp3`
             const tempFileName = `temp-${Date.now()}.mp3`
             const rawFilePath = path.join(process.cwd(), 'tmp', rawFileName)
             const tempFilePath = path.join(process.cwd(), 'tmp', tempFileName)
 
             const tempDir = path.join(process.cwd(), 'tmp')
-            try {
+            try
+            {
               await fs.mkdir(tempDir)
-            } catch (err) {
-              if (err.code !== 'EEXIST') {
+            } catch (err)
+            {
+              if (err.code !== 'EEXIST')
+              {
                 throw err
               }
             }
@@ -127,14 +140,17 @@ async function interact(caller, action) {
             const audioUrl = `${process.env.BASE_URL}/ivr/audio/${tempFileName}`
 
             agent.play(audioUrl)
-            setTimeout(async () => {
+            setTimeout(async () =>
+            {
               await deleteFile(tempFilePath)
               await deleteFile(rawFilePath)
             }, 30000)
-          } else {
+          } else
+          {
             agent.play(trace.payload.src)
           }
-        } else {
+        } else
+        {
           agent.say(trace.payload.message)
         }
         break
@@ -153,10 +169,12 @@ async function interact(caller, action) {
 
         SMS.messages
           .create({ body: message, to: caller, from: TWILIO_PHONE_NUMBER })
-          .then((message) => {
+          .then((message) =>
+          {
             console.log('Message sent, SID:', message.sid)
           })
-          .catch((error) => {
+          .catch((error) =>
+          {
             console.error('Error sending message:', error)
           })
         break
@@ -170,14 +188,16 @@ async function interact(caller, action) {
       }
     }
   }
-  if (endTurn === false) {
+  if (endTurn === false)
+  {
     saveTranscript(caller, false)
   }
 
   return twiml.toString()
 }
 
-async function deleteUserState(caller) {
+async function deleteUserState(caller)
+{
   // call the Voiceflow API with the user's ID
   const request = {
     method: 'DELETE',
@@ -193,17 +213,21 @@ async function deleteUserState(caller) {
   return response
 }
 
-exports.launch = async (called, caller) => {
+exports.launch = async (called, caller) =>
+{
   return interact(caller, { type: 'launch' })
 }
 
-exports.interaction = async (called, caller, query = '', digit = null) => {
+exports.interaction = async (called, caller, query = '', digit = null) =>
+{
   let action = null
-  if (digit) {
+  if (digit)
+  {
     // action = { type: `${digit}` } | Removing the need for a Custom Action
     action = digit ? { type: 'text', payload: digit } : null
     console.log('Digit:', digit)
-  } else {
+  } else
+  {
     action = query.trim() ? { type: 'text', payload: query } : null
     console.log('Utterance:', query)
   }
@@ -211,11 +235,13 @@ exports.interaction = async (called, caller, query = '', digit = null) => {
   return interact(caller, action)
 }
 
-exports.deleteState = async (caller) => {
+exports.deleteState = async (caller) =>
+{
   return deleteUserState(caller)
 }
 
-function createSession() {
+function createSession()
+{
   // Random Number Generator
   var randomNo = Math.floor(Math.random() * 1000 + 1)
   // get Timestamp
@@ -236,10 +262,13 @@ function createSession() {
   return session_id
 }
 
-async function saveTranscript(username, isEnd) {
-  if (VOICEFLOW_PROJECT_ID) {
+async function saveTranscript(username, isEnd)
+{
+  if (VOICEFLOW_PROJECT_ID)
+  {
     console.log('SAVE TRANSCRIPT')
-    if (!username || username == '' || username == undefined) {
+    if (!username || username == '' || username == undefined)
+    {
       username = 'Anonymous'
     }
     axios({
@@ -263,10 +292,13 @@ async function saveTranscript(username, isEnd) {
         Authorization: VOICEFLOW_API_KEY,
       },
     })
-      .then(function (response) {
+      .then(function (response)
+      {
         console.log('Saved!')
-        if (isEnd == true) {
-          if (RESET_STATE === 'true') {
+        if (isEnd == true)
+        {
+          if (RESET_STATE === 'true')
+          {
             console.log('Resetting state')
             deleteUserState(username)
           }
@@ -274,9 +306,12 @@ async function saveTranscript(username, isEnd) {
         }
       })
       .catch((err) => console.log(err))
-  } else {
-    if (isEnd == true) {
-      if (RESET_STATE === 'true') {
+  } else
+  {
+    if (isEnd == true)
+    {
+      if (RESET_STATE === 'true')
+      {
         console.log('Resetting state')
         deleteUserState(username)
       }
