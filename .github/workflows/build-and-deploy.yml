@@ -37,10 +37,24 @@ jobs:
           docker build . -t ghcr.io/${REPO_NAME}:latest
           docker push ghcr.io/${REPO_NAME}:latest
 
-      - name: Install Railway
-        run: npm i -g @railway/cli
-
-      # - name: Deploy
-      #   run: railway redeploy -y --service ${{ secrets.RAILWAY_SERVICE_ID }}
-      #   env:
-      #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Deployment
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+          SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+          ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
+        run: |
+          curl -X POST https://backboard.railway.app/graphql/v2 \
+          -H "Authorization: Bearer $RAILWAY_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "operationName": "ServiceInstanceRedeploy",
+            "query": "mutation ServiceInstanceRedeploy($serviceId: String!, $environmentId: String!) { serviceInstanceRedeploy(serviceId: $serviceId, environmentId: $environmentId) }",
+            "variables": {
+              "environmentId": "'$ENVIRONMENT_ID'",
+              "serviceId": "'$SERVICE_ID'"
+            }
+          }'
