@@ -99,7 +99,7 @@ async function interact(caller, action)
       actionOnEmptyResult: true,
       speechModel: 'experimental_utterances', // 'phone_call', 'numbers_and_commands','experimental_utterances', 'experimental_conversations', ...
       // enhanced: true,
-      speechTimeout: '5',
+      speechTimeout: '2',
       language: 'en-US',
       method: 'POST',
     })
