@@ -38,6 +38,9 @@ jobs:
       - name: Set REPO_NAME Environment Variable
         run: |
           echo "REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      
+      - name: Print REPO_NAME
+        run: echo $REPO_NAME
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -45,7 +48,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ghcr.io/${REPO_NAME}:latest
+          tags: ghcr.io/${{ env.REPO_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
