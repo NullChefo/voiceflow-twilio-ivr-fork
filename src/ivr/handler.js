@@ -101,7 +101,7 @@ async function interact(caller, action)
       // enhanced: true,
       // speechTimeout: '2',
       enhanced: "true",
-      speechTimeout: '4',
+      speechTimeout: 'auto',
       language: 'en-US',
       method: 'POST',
     })
