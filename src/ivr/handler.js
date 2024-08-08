@@ -95,13 +95,13 @@ async function interact(caller, action)
       finishOnKey: '#',
       hints: 'no, yes , email, numbers, phone number, date of birth, policy number, name',
       action: '/ivr/interaction',
-      profanityFilter: true,
+      // profanityFilter: true,
       actionOnEmptyResult: true,
       speechModel: 'experimental_conversations', // 'phone_call', 'numbers_and_commands','experimental_utterances', 'experimental_conversations', ...
       // enhanced: true,
       // speechTimeout: '2',
       enhanced: "true",
-      speechTimeout: 'auto',
+      speechTimeout: '2',
       language: 'en-US',
       method: 'POST',
     })
