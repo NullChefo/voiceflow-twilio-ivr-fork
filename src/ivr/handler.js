@@ -93,13 +93,15 @@ async function interact(caller, action)
       input: 'speech dtmf', // 'speech',
       numDigits: 4,
       finishOnKey: '#',
-      hints: 'I need to check my account, Tico, Voiceflow, NiKo, yes',
+      hints: 'no, yes , email, numbers, phone number, date of birth, policy number, name',
       action: '/ivr/interaction',
-      profanityFilter: false,
+      profanityFilter: true,
       actionOnEmptyResult: true,
-      speechModel: 'experimental_utterances', // 'phone_call', 'numbers_and_commands','experimental_utterances', 'experimental_conversations', ...
+      speechModel: 'experimental_conversations', // 'phone_call', 'numbers_and_commands','experimental_utterances', 'experimental_conversations', ...
       // enhanced: true,
-      speechTimeout: '2',
+      // speechTimeout: '2',
+      enhanced: "true",
+      speechTimeout: 'auto',
       language: 'en-US',
       method: 'POST',
     })
