@@ -97,7 +97,7 @@ async function interact(caller, action)
       action: '/ivr/interaction',
       // profanityFilter: true,
       actionOnEmptyResult: true,
-      speechModel: 'experimental_conversations', // 'phone_call', 'numbers_and_commands','experimental_utterances', 'experimental_conversations', ...
+      speechModel: 'experimental_utterances', // 'phone_call', 'numbers_and_commands','experimental_utterances', 'experimental_conversations', ...
       // enhanced: true,
       // speechTimeout: '2',
       enhanced: "true",
